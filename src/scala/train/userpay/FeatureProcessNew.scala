@@ -20,15 +20,15 @@ object FeatureProcessNew {
     val hdfsPath="hdfs:///pay_predict/"
     //val hdfsPath=""
     //筛选的训练集用户名单路径
-    val userListPath = hdfsPath+"data/train/userpay/trainusersnew"+args(0)
+    val userListPath = hdfsPath+"data/train/usersplit/trainusersnew"+args(0)
     //媒资数据路径
     val mediasPath = hdfsPath+"data/train/common/processed/mediastemp.pkl"
     //训练集数据的保存路径
-    val trainSetSavePath =hdfsPath+ "data/train/userpay/"
+    val trainSetSavePath  = hdfsPath +  "data/train/userpay/"
     //最初生成的用户画像数据集路径
-    val userProfilePlayPartPath=hdfsPath+"data/train/common/processed/userprofileplaypart"+args(0)
-    val userProfilePreferencePartPath=hdfsPath+"data/train/common/processed/userprofilepreferencepart"+args(0)
-    val userProfileOrderPartPath=hdfsPath+"data/train/common/processed/userprofileorderpart"+args(0)
+    val userProfilePlayPartPath = hdfsPath + "data/train/common/processed/userpay/userprofileplaypart"+args(0)
+    val userProfilePreferencePartPath = hdfsPath + "data/train/common/processed/userpay/userprofilepreferencepart"+args(0)
+    val userProfileOrderPartPath = hdfsPath + "data/train/common/processed/userpay/userprofileorderpart"+args(0)
 
     val spark: SparkSession = new sql.SparkSession.Builder()
       .appName("FeatureProcessNew")
@@ -65,9 +65,9 @@ object FeatureProcessNew {
 
 
 
-    val videoFirstCategoryTempPath=hdfsPath+"data/train/common/processed/videofirstcategorytemp.txt"
-    val videoSecondCategoryTempPath=hdfsPath+"data/train/common/processed/videosecondcategorytemp.txt"
-    val labelTempPath=hdfsPath+"data/train/common/processed/labeltemp.txt"
+    val videoFirstCategoryTempPath = hdfsPath + "data/train/common/processed/videofirstcategorytemp.txt"
+    val videoSecondCategoryTempPath = hdfsPath + "data/train/common/processed/videosecondcategorytemp.txt"
+    val labelTempPath = hdfsPath + "data/train/common/processed/labeltemp.txt"
     var videoFirstCategoryMap: Map[String, Int] = Map()
     var videoSecondCategoryMap: Map[String, Int] = Map()
     var labelMap: Map[String, Int] = Map()
@@ -172,7 +172,7 @@ object FeatureProcessNew {
 
     val result=tempDataFrame.select(columnList.map(tempDataFrame.col(_)):_*)
     //result.show()
-    result.write.mode(SaveMode.Overwrite).format("parquet").save(trainSetSavePath+"trainsetnew"+args(0))
+    result.write.mode(SaveMode.Overwrite).format("parquet").save(trainSetSavePath + "trainsetnew" + args(0))
     result.write.mode(SaveMode.Overwrite).option("header","true").csv(trainSetSavePath + "trainsetnew" + args(0)+".csv")
 
 

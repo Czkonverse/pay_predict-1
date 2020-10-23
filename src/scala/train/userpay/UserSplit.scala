@@ -27,8 +27,8 @@ object UserSplit {
     val hdfsPath="hdfs:///pay_predict/"
     //val hdfsPath=""
 
-    val playsProcessedPath=hdfsPath+"data/train/common/processed/plays"
-    val ordersProcessedPath=hdfsPath+"data/train/common/processed/orders"
+    val playsProcessedPath=hdfsPath+"data/train/common/processed/userpay/plays_new"
+    val ordersProcessedPath=hdfsPath+"data/train/common/processed/userpay/orders"
     //老用户名单保存路径
     val oldUserSavePath =hdfsPath+"data/train/userpay/"
     //新用户名单保存路径
@@ -132,7 +132,7 @@ object UserSplit {
 
     var trainPlay= play
           .filter(
-            col(Dic.colPlayEndTime).===(trainTime)
+            substring(col(Dic.colPlayEndTime),1,10) === args(0)   //当天有播放数据的用户
             && col(Dic.colBroadcastTime)>120
           ).select(col(Dic.colUserId)).distinct()
     trainPlay=trainPlay.except(trainOld).except(trainPosUsers).except(trainNegOrderUsers)

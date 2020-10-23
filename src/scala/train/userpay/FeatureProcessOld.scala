@@ -17,15 +17,15 @@ object FeatureProcessOld {
     val hdfsPath="hdfs:///pay_predict/"
     //val hdfsPath=""
     //筛选的训练集用户名单路径
-    val userListPath = hdfsPath+"data/train/userpay/trainusersold" + args(0)
+    val userListPath = hdfsPath+"data/train/usersplit/trainusersold" + args(0)
     //媒资数据路径
     val mediasPath = hdfsPath+"data/train/common/processed/mediastemp.pkl"
     //训练集数据的保存路径
     val trainSetSavePath = hdfsPath+"data/train/userpay/"
     //最初生成的用户画像数据集路径
-    val userProfilePlayPartPath = hdfsPath+"data/train/common/processed/userprofileplaypart" + args(0)
-    val userProfilePreferencePartPath = hdfsPath+"data/train/common/processed/userprofilepreferencepart" + args(0)
-    val userProfileOrderPartPath = hdfsPath+"data/train/common/processed/userprofileorderpart" + args(0)
+    val userProfilePlayPartPath = hdfsPath+"data/train/common/processed/userpay/userprofileplaypart" + args(0)
+    val userProfilePreferencePartPath = hdfsPath+"data/train/common/processed/userpay/userprofilepreferencepart" + args(0)
+    val userProfileOrderPartPath = hdfsPath+"data/train/common/processed/userpay/userprofileorderpart" + args(0)
 
     val spark: SparkSession = new sql.SparkSession.Builder()
       .appName("FeatureProcessOld")

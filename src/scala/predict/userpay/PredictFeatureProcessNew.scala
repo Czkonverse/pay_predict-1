@@ -16,15 +16,15 @@ object PredictFeatureProcessNew {
     val hdfsPath="hdfs:///pay_predict/"
     //val hdfsPath=""
     //筛选的训练集用户名单路径
-    val userListPath = hdfsPath+"data/predict/userpay/predictusersnew"+args(0)
+    val userListPath = hdfsPath+"data/predict/usersplit/predictusersnew"+args(0)
     //媒资数据路径
     val mediasPath = hdfsPath+"data/predict/common/processed/mediastemp.pkl"
     //训练集数据的保存路径
     val predictSetSavePath =hdfsPath+ "data/predict/userpay/"
     //最初生成的用户画像数据集路径
-    val userProfilePlayPartPath=hdfsPath+"data/predict/common/processed/userprofileplaypart"+args(0)
-    val userProfilePreferencePartPath=hdfsPath+"data/predict/common/processed/userprofilepreferencepart"+args(0)
-    val userProfileOrderPartPath=hdfsPath+"data/predict/common/processed/userprofileorderpart"+args(0)
+    val userProfilePlayPartPath=hdfsPath+"data/predict/common/processed/userpay/userprofileplaypart"+args(0)
+    val userProfilePreferencePartPath=hdfsPath+"data/predict/common/processed/userpay/userprofilepreferencepart"+args(0)
+    val userProfileOrderPartPath=hdfsPath+"data/predict/common/processed/userpay/userprofileorderpart"+args(0)
 
     val spark: SparkSession = new sql.SparkSession.Builder()
       .appName("PredictFeatureProcessNew")

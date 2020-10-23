@@ -5,6 +5,7 @@ import mam.Utils.calDate
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql
 import org.apache.spark.sql.{SaveMode, SparkSession}
+import org.apache.spark.sql.functions._
 
 object PredictUserSplit {
   def main(args: Array[String]): Unit = {
@@ -15,18 +16,16 @@ object PredictUserSplit {
       .appName("PredictUserSplit")
       //.master("local[6]")
       .getOrCreate()
-    import spark.implicits._
-    import org.apache.spark.sql.functions._
 
-    val hdfsPath="hdfs:///pay_predict/"
+    val hdfsPath = "hdfs:///pay_predict/"
     //val hdfsPath=""
 
-    val playsProcessedPath=hdfsPath+"data/predict/common/processed/plays"
-    val ordersProcessedPath=hdfsPath+"data/predict/common/processed/orders"
+    val playsProcessedPath = hdfsPath + "data/train/common/processed/userpay/plays_new" //userpay
+    val ordersProcessedPath = hdfsPath + "data/train/common/processed/userpay/orders"  //userpay
     //老用户名单保存路径
-    val oldUserSavePath =hdfsPath+"data/predict/userpay/"
+    val oldUserSavePath  = hdfsPath + "data/predict/usersplit/"
     //新用户名单保存路径
-    val newUserSavePath = hdfsPath+"data/predict/userpay/"
+    val newUserSavePath = hdfsPath+"data/predict/usersplit/"
     val predictTime=args(0)+" "+args(1)
     val timeWindow=30
 

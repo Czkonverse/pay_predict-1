@@ -25,7 +25,7 @@ object Dic {
   val colTimeGap30minSignLag = "timeGap_30min_sign_lag"
   val colTimeGap3hSign = "timeGap_3h_sign"
   val colTimeGap3hSignLag = "timeGap_3h_sign_lag"
-  val colConvertEndTime = "convert_end_time"
+  val colConvertTime = "convert_time"
   val colSessionSign = "session_sign"
 
 
@@ -240,6 +240,7 @@ object Dic {
    */
   //"subscriberid","devicemsg","featurecode","bigversion","province","city","citylevel","areaid",
   // "time","itemtype","itemid","partitiondate"
+  val colSubscriberId = "subscriberid"
   val colDeviceMsg="devicemsg"
   val colFeatureCode="featurecode"
   val colBigVersion="bigversion"
