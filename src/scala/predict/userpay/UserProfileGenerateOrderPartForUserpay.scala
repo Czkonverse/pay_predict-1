@@ -1,7 +1,7 @@
 package predict.userpay
 
 import mam.Dic
-import mam.Utils.{calDate, udfGetDays}
+import mam.Utils.{calDate, printDf, udfGetDays}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql
 import org.apache.spark.sql.{SaveMode, SparkSession}
@@ -35,7 +35,7 @@ object UserProfileGenerateOrderPartForUserpay {
     val joinKeysUserId = Seq(Dic.colUserId)
 
     val user_order=orders.filter(col(Dic.colCreationTime).<(now))
-    val order_part_1=user_order
+    val order_part_1 = user_order
       .filter(
         col(Dic.colResourceType).>(0)
           && col(Dic.colOrderStatus).>(1)
@@ -49,7 +49,7 @@ object UserProfileGenerateOrderPartForUserpay {
         avg(col(Dic.colMoney)).as(Dic.colAvgMoneyPackagePurchased),
         stddev(col(Dic.colMoney)).as(Dic.colVarMoneyPackagePurchased)
       )
-    val order_part_2=user_order
+    val order_part_2 = user_order
       .filter(
         col(Dic.colResourceType).===(0)
           && col(Dic.colOrderStatus).>(1)
@@ -59,7 +59,7 @@ object UserProfileGenerateOrderPartForUserpay {
         count(col(Dic.colUserId)).as(Dic.colNumberSinglesPurchased),
         sum(col(Dic.colMoney)).as(Dic.colTotalMoneySinglesPurchased)
       )
-    val order_part_3=user_order
+    val order_part_3 = user_order
       .filter(
         col(Dic.colOrderStatus).>(1)
       )
@@ -67,7 +67,7 @@ object UserProfileGenerateOrderPartForUserpay {
       .agg(
         sum(col(Dic.colMoney)).as(Dic.colTotalMoneyConsumption)
       )
-    val order_part_4=user_order
+    val order_part_4 = user_order
       .filter(
         col(Dic.colResourceType).>(0)
           && col(Dic.colOrderStatus).<=(1)
@@ -78,7 +78,7 @@ object UserProfileGenerateOrderPartForUserpay {
         sum(col(Dic.colMoney)).as(Dic.colMoneyPackagesUnpurchased)
       )
 
-    val order_part_5=user_order
+    val order_part_5 = user_order
       .filter(
         col(Dic.colResourceType).===(0)
           && col(Dic.colOrderStatus).<=(1)
@@ -88,7 +88,7 @@ object UserProfileGenerateOrderPartForUserpay {
         count(col(Dic.colUserId)).as(Dic.colNumberSinglesUnpurchased),
         sum(col(Dic.colMoney)).as(Dic.colMoneySinglesUnpurchased)
       )
-    val order_part_6=user_order
+    val order_part_6 = user_order
       .filter(
         col(Dic.colResourceType).>(0)
           && col(Dic.colOrderStatus).>(1)
@@ -98,7 +98,7 @@ object UserProfileGenerateOrderPartForUserpay {
         udfGetDays(max(col(Dic.colCreationTime)),lit(now)).as(Dic.colDaysSinceLastPurchasePackage)
       )
 
-    val order_part_7=user_order
+    val order_part_7 = user_order
       .filter(
         col(Dic.colResourceType).>(0)
       )
@@ -107,7 +107,7 @@ object UserProfileGenerateOrderPartForUserpay {
         udfGetDays(max(col(Dic.colCreationTime)),lit(now)).as(Dic.colDaysSinceLastClickPackage)
       )
 
-    val order_part_8=user_order
+    val order_part_8 = user_order
       .filter(
         col(Dic.colCreationTime).>=(pre_30)
       )
@@ -116,7 +116,7 @@ object UserProfileGenerateOrderPartForUserpay {
         count(col(Dic.colUserId)).as(Dic.colNumbersOrdersLast30Days)
       )
 
-    val order_part_9=user_order
+    val order_part_9 = user_order
       .filter(
         col(Dic.colCreationTime).>=(pre_30)
         && col(Dic.colOrderStatus).>(1)
@@ -125,17 +125,17 @@ object UserProfileGenerateOrderPartForUserpay {
       .agg(
         count(col(Dic.colUserId)).as(Dic.colNumberPaidOrdersLast30Days)
       )
-    val order_part_10=user_order
+    val order_part_10 = user_order
       .filter(
         col(Dic.colCreationTime).>=(pre_30)
           && col(Dic.colOrderStatus).>(1)
-        && col(Dic.colResourceType).>(0)
+          && col(Dic.colResourceType).>(0)
       )
       .groupBy(col(Dic.colUserId))
       .agg(
         count(col(Dic.colUserId)).as(Dic.colNumberPaidPackageLast30Days)
       )
-    val order_part_11=user_order
+    val order_part_11 = user_order
       .filter(
         col(Dic.colCreationTime).>=(pre_30)
           && col(Dic.colOrderStatus).>(1)
@@ -146,7 +146,7 @@ object UserProfileGenerateOrderPartForUserpay {
         count(col(Dic.colUserId)).as(Dic.colNumberPaidSingleLast30Days)
       )
 
-    val order_part_12=user_order
+    val order_part_12 = user_order
       .filter(
         col(Dic.colOrderEndTime).>(now)
         && col(Dic.colResourceType).>(0)
@@ -158,23 +158,25 @@ object UserProfileGenerateOrderPartForUserpay {
       )
 
 
+    //当前是否是连续包月
+    val order_part_13 = user_order.filter(col(Dic.colContinueSub) === 1)
 
+    result = result.join(order_part_1,joinKeysUserId,"left")
+                    .join(order_part_2,joinKeysUserId, "left")
+                    .join(order_part_3,joinKeysUserId,"left")
+                    .join(order_part_4,joinKeysUserId, "left")
+                    .join(order_part_5,joinKeysUserId, "left")
+                    .join(order_part_6,joinKeysUserId, "left")
+                    .join(order_part_7,joinKeysUserId, "left")
+                    .join(order_part_8,joinKeysUserId,"left")
+                    .join(order_part_9,joinKeysUserId, "left")
+                    .join(order_part_10,joinKeysUserId, "left")
+                    .join(order_part_11,joinKeysUserId, "left")
+                    .join(order_part_12,joinKeysUserId, "left")
+                    .join(order_part_13,joinKeysUserId, "left")
+                    .na.fill(Map((Dic.colContinueSub, 0)))
 
-
-    result=result.join(order_part_1,joinKeysUserId,"left")
-    .join(order_part_2,joinKeysUserId, "left")
-    .join(order_part_3,joinKeysUserId,"left")
-    .join(order_part_4,joinKeysUserId, "left")
-    .join(order_part_5,joinKeysUserId, "left")
-    .join(order_part_6,joinKeysUserId, "left")
-    .join(order_part_7,joinKeysUserId, "left")
-    .join(order_part_8,joinKeysUserId,"left")
-    .join(order_part_9,joinKeysUserId, "left")
-    .join(order_part_10,joinKeysUserId, "left")
-    .join(order_part_11,joinKeysUserId, "left")
-    .join(order_part_12,joinKeysUserId, "left")
-
-   // result49.show()
+    printDf("用户画像 order part", result)
 
     val userProfileOrderPartSavePath = hdfsPath + "data/predict/common/processed/userpay/userprofileorderpart"+now.split(" ")(0)
     //大约有85万用户
@@ -193,13 +195,9 @@ object UserProfileGenerateOrderPartForUserpay {
       val playsProcessedPath = hdfsPath + "data/train/common/processed/userpay/plays_new" //userpay
       val ordersProcessedPath = hdfsPath + "data/train/common/processed/userpay/orders" //userpay
       val now=args(0)+" "+args(1)
+
+
       userProfileGenerateOrderPart(now,30,mediasProcessedPath,playsProcessedPath,ordersProcessedPath,hdfsPath)
-
-
-
-
-
-
 
 
   }

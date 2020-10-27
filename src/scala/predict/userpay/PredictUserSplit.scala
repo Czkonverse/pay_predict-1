@@ -33,8 +33,8 @@ object PredictUserSplit {
     //所有用户id的列表
     val allUsersList=play.select(col(Dic.colUserId)).distinct().collect().map(_(0)).toList
     //所有用户id的dataframe
-    println("用户总人数："+allUsersList.length)
-    val allUsersDataFrame=play.select(col(Dic.colUserId)).distinct()
+    println("用户总人数：" + allUsersList.length)
+    val allUsersDataFrame = play.select(col(Dic.colUserId)).distinct()
 
 
 
@@ -64,15 +64,16 @@ object PredictUserSplit {
           && ((col(Dic.colCreationTime).>(predictTimePre) && col(Dic.colCreationTime).<(predictTime))
           || (col(Dic.colOrderEndTime).>(predictTime) && col(Dic.colCreationTime).<(predictTime)) )
       )
-    val joinKeysUserId=Seq(Dic.colUserId)
-    predictOrderOld=allUsersDataFrame.join(predictOrderOld,joinKeysUserId,"inner")
-    val predictOld=predictOrderOld.select(col(Dic.colUserId)).distinct()
-    val predictNew=allUsersDataFrame.except(predictOld)
-    //println("预测数据集生成完成！")
+    val joinKeysUserId = Seq(Dic.colUserId)
+    predictOrderOld = allUsersDataFrame.join(predictOrderOld,joinKeysUserId,"inner")
+    val predictOld = predictOrderOld.select(col(Dic.colUserId)).distinct()
+    val predictNew = allUsersDataFrame.except(predictOld)
+
+
     println("需要预测的老用户的数量："+predictOld.count())
     println("需要预测的新用户的数量："+predictNew.count())
     predictOld.write.mode(SaveMode.Overwrite).format("parquet").save(oldUserSavePath+"predictusersold"+args(0))
-    predictNew.write.mode(SaveMode.Overwrite).format("parquet").save(oldUserSavePath+"predictusersnew"+args(0))
+    predictNew.write.mode(SaveMode.Overwrite).format("parquet").save(newUserSavePath+"predictusersnew"+args(0))
 
 
   }
